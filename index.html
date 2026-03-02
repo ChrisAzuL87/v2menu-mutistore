@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="早餐點餐">
+<meta name="theme-color" content="#f97316">
+<meta name="description" content="手機版早餐店點餐金額計算器">
+
+<title>早餐點餐計算器</title>
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+<!-- Favicon fallback -->
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+<style>
+/* ========== Reset & Variables ========== */
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --primary: #f97316;
+  --primary-dark: #ea580c;
+  --primary-light: #fff7ed;
+  --bg: #fafaf9;
+  --card: #ffffff;
+  --border: #e7e5e4;
+  --text: #1c1917;
+  --muted: #78716c;
+  --success: #22c55e;
+  --header-h: 62px;
+  --tabs-h: 46px;
+}
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 138px;
+  overscroll-behavior-y: contain;
+}
+
+/* ========== Header ========== */
+header {
+  background: var(--primary);
+  color: #fff;
+  padding: 0 16px;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(249,115,22,0.35);
+}
+header h1 { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.3px; }
+header p { font-size: 0.72rem; opacity: 0.85; margin-top: 1px; }
+.offline-badge {
+  display: none;
+  background: rgba(0,0,0,0.25);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+body.offline .offline-badge { display: block; }
+
+/* ========== Category Tabs ========== */
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  background: #fff;
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: var(--header-h);
+  z-index: 99;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0;
+  padding: 0 16px;
+  height: var(--tabs-h);
+  line-height: var(--tabs-h);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color 0.18s, border-color 0.18s;
+  white-space: nowrap;
+  user-select: none;
+}
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* ========== Menu Sections ========== */
+.section { display: none; padding: 12px 12px 4px; }
+.section.active { display: block; }
+.section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ========== Item Card ========== */
+.item-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  will-change: transform;
+}
+.item-card.has-qty {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px #fed7aa80;
+}
+.item-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 14px;
+  gap: 12px;
+}
+.item-info { flex: 1; min-width: 0; }
+.item-name {
+  font-size: 0.97rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-price {
+  font-size: 0.82rem;
+  color: var(--primary);
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+/* Qty control */
+.qty-ctrl { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.qty-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  background: #fff;
+  color: var(--primary);
+  font-size: 1.35rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s, transform 0.1s;
+  user-select: none;
+  line-height: 1;
+}
+.qty-btn:active { background: var(--primary); color: #fff; transform: scale(0.88); }
+.qty-btn.plus { background: var(--primary); color: #fff; }
+.qty-btn.plus:active { background: var(--primary-dark); }
+.qty-num {
+  min-width: 26px;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+/* Options */
+.item-options {
+  padding: 0 14px 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.opt-label {
+  font-size: 0.72rem;
+  width: 100%;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 1px;
+}
+.opt-btn {
+  padding: 6px 11px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text);
+  transition: all 0.15s;
+  user-select: none;
+}
+.opt-btn.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+.opt-btn:active { transform: scale(0.93); }
+
+/* ========== Bottom Bar ========== */
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #fff;
+  border-top: 1.5px solid var(--border);
+  padding: 10px 16px max(12px, env(safe-area-inset-bottom));
+  z-index: 200;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+}
+.order-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.summary-left { font-size: 0.82rem; color: var(--muted); }
+.total-wrap { text-align: right; }
+.total-label { font-size: 0.7rem; color: var(--muted); }
+.total-price { font-size: 1.6rem; font-weight: 900; color: var(--primary); line-height: 1; }
+.bottom-btns { display: flex; gap: 10px; }
+.btn-clear {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--muted);
+  transition: background 0.15s;
+}
+.btn-clear:active { background: #fafaf9; }
+.btn-order {
+  flex: 2.2;
+  padding: 13px;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.15s;
+}
+.btn-order:active { background: var(--primary-dark); }
+.btn-order.empty { opacity: 0.55; }
+
+/* ========== Modal ========== */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 500;
+  align-items: flex-end;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #fff;
+  width: 100%;
+  max-height: 82vh;
+  border-radius: 22px 22px 0 0;
+  padding: 20px 20px max(20px, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.modal-handle {
+  width: 40px; height: 4px;
+  background: var(--border);
+  border-radius: 4px;
+  margin: 0 auto 18px;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.modal-header h2 { font-size: 1.05rem; font-weight: 800; }
+.modal-close {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--border);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+}
+.order-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+  gap: 8px;
+}
+.order-item-name { flex: 1; font-weight: 500; }
+.order-item-qty { color: var(--muted); font-size: 0.82rem; white-space: nowrap; }
+.order-item-subtotal { font-weight: 800; color: var(--primary); white-space: nowrap; }
+.modal-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 2px solid var(--text);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.modal-total-amount { font-size: 1.4rem; color: var(--primary); }
+.empty-msg {
+  text-align: center;
+  color: var(--muted);
+  padding: 44px 0 20px;
+  font-size: 0.92rem;
+}
+
+/* ========== Toast ========== */
+.toast {
+  position: fixed;
+  bottom: 160px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1c1917;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  z-index: 600;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ========== Install Banner ========== */
+.install-banner {
+  display: none;
+  background: #fff;
+  border: 1.5px solid var(--primary);
+  border-radius: 14px;
+  margin: 12px;
+  padding: 12px 14px;
+  align-items: center;
+  gap: 10px;
+}
+.install-banner.visible { display: flex; }
+.install-banner-text { flex: 1; font-size: 0.82rem; font-weight: 600; color: var(--text); }
+.install-banner-text span { display: block; font-size: 0.72rem; color: var(--muted); font-weight: 400; margin-top: 1px; }
+.btn-install {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-dismiss {
+  padding: 6px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div>
+    <h1>🍳 早餐點餐計算器</h1>
+    <p>點選品項，快速計算總金額</p>
+  </div>
+  <div class="offline-badge">📵 離線模式</div>
+</header>
+
+<!-- PWA Install Banner (Android Chrome) -->
+<div class="install-banner" id="install-banner">
+  <div class="install-banner-text">
+    加入主畫面，像 App 一樣使用
+    <span>離線也可以點餐！</span>
+  </div>
+  <button class="btn-install" id="btn-install">安裝</button>
+  <button class="btn-dismiss" id="btn-dismiss">✕</button>
+</div>
+
+<!-- Category Tabs -->
+<div class="tabs" id="tabs"></div>
+
+<!-- Menu Sections -->
+<div id="sections"></div>
+
+<!-- Bottom Bar -->
+<div class="bottom-bar">
+  <div class="order-summary">
+    <div class="summary-left" id="item-count">尚未選擇品項</div>
+    <div class="total-wrap">
+      <div class="total-label">合計金額</div>
+      <div class="total-price">$<span id="total">0</span></div>
+    </div>
+  </div>
+  <div class="bottom-btns">
+    <button class="btn-clear" onclick="clearAll()">🗑 清空</button>
+    <button class="btn-order empty" id="btn-order" onclick="showOrder()">查看訂單明細</button>
+  </div>
+</div>
+
+<!-- Order Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModalOverlay(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h2>📋 訂單明細</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-content"></div>
+    <div id="modal-total"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+//  App State & Persistence
+// ============================================================
+const STORAGE_KEY = 'breakfast_order_v2';
+let state = {}; // { "category__name": { qty, optionIdx } }
+let menuData = [];
+
+function loadState() {
+  try { state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { state = {}; }
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+function getKey(item) { return `${item.category}__${item.name}`; }
+function getItemState(item) {
+  const k = getKey(item);
+  if (!state[k]) state[k] = { qty: 0, optionIdx: -1 };
+  return state[k];
+}
+function getEffectivePrice(item) {
+  const s = getItemState(item);
+  if (item.options && item.options.length > 0 && s.optionIdx >= 0) return item.options[s.optionIdx].price;
+  return item.price;
+}
+
+// ============================================================
+//  Build UI
+// ============================================================
+function buildUI() {
+  const categories = [...new Set(menuData.map(i => i.category))];
+  const tabsEl = document.getElementById('tabs');
+  const sectionsEl = document.getElementById('sections');
+  tabsEl.innerHTML = '';
+  sectionsEl.innerHTML = '';
+
+  categories.forEach((cat, ci) => {
+    const tab = document.createElement('div');
+    tab.className = 'tab' + (ci === 0 ? ' active' : '');
+    tab.textContent = cat;
+    tab.onclick = () => switchTab(ci);
+    tabsEl.appendChild(tab);
+
+    const sec = document.createElement('div');
+    sec.className = 'section' + (ci === 0 ? ' active' : '');
+    sec.id = `sec-${ci}`;
+    sec.innerHTML = `<div class="section-title">${cat}</div>`;
+    menuData.filter(i => i.category === cat).forEach(item => sec.appendChild(buildCard(item)));
+    sectionsEl.appendChild(sec);
+  });
+}
+
+function buildCard(item) {
+  const s = getItemState(item);
+  const card = document.createElement('div');
+  card.className = 'item-card' + (s.qty > 0 ? ' has-qty' : '');
+  card.id = `card-${getKey(item)}`;
+
+  const effPrice = s.optionIdx >= 0 && item.options.length > 0 ? item.options[s.optionIdx].price : item.price;
+  const priceLabel = item.options.length > 0 && s.optionIdx < 0 ? `$${item.price} 起` : `$${effPrice}`;
+  const key = getKey(item);
+
+  card.innerHTML = `
+    <div class="item-main">
+      <div class="item-info">
+        <div class="item-name">${item.name}</div>
+        <div class="item-price">${priceLabel}</div>
+      </div>
+      <div class="qty-ctrl">
+        <button class="qty-btn minus" onclick="changeQty('${key}',-1)">−</button>
+        <span class="qty-num">${s.qty}</span>
+        <button class="qty-btn plus" onclick="changeQty('${key}',1)">+</button>
+      </div>
+    </div>`;
+
+  if (item.options && item.options.length > 0) {
+    const optDiv = document.createElement('div');
+    optDiv.className = 'item-options';
+    optDiv.innerHTML = `<span class="opt-label">選擇規格：</span>`;
+    item.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn' + (s.optionIdx === idx ? ' selected' : '');
+      btn.textContent = `${opt.name}　$${opt.price}`;
+      btn.onclick = () => selectOption(key, idx);
+      optDiv.appendChild(btn);
+    });
+    card.appendChild(optDiv);
+  }
+  return card;
+}
+
+function refreshCard(item) {
+  const el = document.getElementById(`card-${getKey(item)}`);
+  if (el) el.replaceWith(buildCard(item));
+}
+
+// ============================================================
+//  Actions
+// ============================================================
+function changeQty(key, delta) {
+  const item = menuData.find(i => getKey(i) === key);
+  if (!item) return;
+  const s = getItemState(item);
+  s.qty = Math.max(0, s.qty + delta);
+  saveState();
+  refreshCard(item);
+  updateTotal();
+}
+
+function selectOption(key, idx) {
+  const item = menuData.find(i => getKey(i) === key);
+  if (!item) return;
+  const s = getItemState(item);
+  s.optionIdx = s.optionIdx === idx ? -1 : idx;
+  saveState();
+  refreshCard(item);
+  updateTotal();
+}
+
+function updateTotal() {
+  let total = 0, count = 0, kinds = 0;
+  menuData.forEach(item => {
+    const s = getItemState(item);
+    if (s.qty > 0) { total += getEffectivePrice(item) * s.qty; count += s.qty; kinds++; }
+  });
+  document.getElementById('total').textContent = total;
+  document.getElementById('item-count').textContent =
+    count > 0 ? `共 ${kinds} 種・${count} 樣品項` : '尚未選擇品項';
+  const orderBtn = document.getElementById('btn-order');
+  orderBtn.classList.toggle('empty', count === 0);
+}
+
+function switchTab(idx) {
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.section').forEach((s, i) => s.classList.toggle('active', i === idx));
+}
+
+function clearAll() {
+  const ordered = menuData.filter(i => getItemState(i).qty > 0);
+  if (ordered.length === 0) { showToast('目前沒有任何品項'); return; }
+  if (!confirm('確定要清空所有訂單嗎？')) return;
+  state = {};
+  saveState();
+  buildUI();
+  updateTotal();
+  showToast('已清空訂單');
+}
+
+function showOrder() {
+  const ordered = menuData.filter(i => getItemState(i).qty > 0);
+  const content = document.getElementById('modal-content');
+  const totalEl = document.getElementById('modal-total');
+
+  if (ordered.length === 0) {
+    content.innerHTML = '<div class="empty-msg">🛒 尚未選擇任何品項</div>';
+    totalEl.innerHTML = '';
+  } else {
+    let html = '', total = 0;
+    ordered.forEach(item => {
+      const s = getItemState(item);
+      const price = getEffectivePrice(item);
+      const sub = price * s.qty;
+      total += sub;
+      const opt = s.optionIdx >= 0 ? `（${item.options[s.optionIdx].name}）` : '';
+      html += `<div class="order-item-row">
+        <span class="order-item-name">${item.name}${opt}</span>
+        <span class="order-item-qty">×${s.qty}</span>
+        <span class="order-item-subtotal">$${sub}</span>
+      </div>`;
+    });
+    content.innerHTML = html;
+    totalEl.innerHTML = `<div class="modal-total"><span>總計</span><span class="modal-total-amount">$${total}</span></div>`;
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function closeModalOverlay(e) { if (e.target === document.getElementById('modal')) closeModal(); }
+
+// ============================================================
+//  Toast
+// ============================================================
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ============================================================
+//  Offline Detection
+// ============================================================
+function updateOnlineStatus() {
+  document.body.classList.toggle('offline', !navigator.onLine);
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', () => { updateOnlineStatus(); showToast('📵 已切換為離線模式'); });
+updateOnlineStatus();
+
+// ============================================================
+//  PWA Install Prompt (Android Chrome)
+// ============================================================
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!localStorage.getItem('pwa_dismissed')) {
+    document.getElementById('install-banner').classList.add('visible');
+  }
+});
+document.getElementById('btn-install').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('install-banner').classList.remove('visible');
+  if (outcome === 'accepted') showToast('✅ 已加入主畫面');
+});
+document.getElementById('btn-dismiss').addEventListener('click', () => {
+  document.getElementById('install-banner').classList.remove('visible');
+  localStorage.setItem('pwa_dismissed', '1');
+});
+
+// ============================================================
+//  Service Worker Registration
+// ============================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(reg => console.log('[PWA] SW registered, scope:', reg.scope))
+      .catch(err => console.warn('[PWA] SW registration failed:', err));
+  });
+}
+
+// ============================================================
+//  Load Menu & Init
+// ============================================================
+async function init() {
+  loadState();
+  try {
+    const res = await fetch('./menu.json');
+    menuData = await res.json();
+  } catch (e) {
+    // Fallback shouldn't be needed since SW caches it, but just in case
+    console.warn('Failed to load menu.json', e);
+    showToast('⚠️ 菜單載入失敗，請重新整理');
+    return;
+  }
+  buildUI();
+  updateTotal();
+}
+
+init();
+</script>
+</body>
+</html>
