@@ -1,0 +1,35 @@
+{
+  "store_info": {
+    "id": "store_3",
+    "name": "Store 3",
+    "type": "snack"
+  },
+  "categories": [
+    {
+      "category": "羹類",
+      "items": [
+        { "id": "lamb_soup", "name": "羊肉羹", "price": 80, "options": [{ "name": "小", "price": 80 }, { "name": "大", "price": 95 }] },
+        { "id": "squid_soup", "name": "魷魚羹", "price": 75, "options": [{ "name": "小", "price": 75 }, { "name": "大", "price": 90 }] },
+        { "id": "cuttlefish_soup", "name": "花枝羹", "price": 75, "options": [{ "name": "小", "price": 75 }, { "name": "大", "price": 90 }] },
+        { "id": "meat_soup", "name": "赤肉羹", "price": 75, "options": [{ "name": "小", "price": 75 }, { "name": "大", "price": 90 }] },
+        { "id": "mixed_soup", "name": "綜合羹", "price": 85, "options": [{ "name": "小", "price": 85 }, { "name": "大", "price": 100 }] }
+      ]
+    },
+    {
+      "category": "飯類",
+      "items": [
+        { "id": "braised_pork_rice", "name": "魯肉飯", "price": 40, "options": [{ "name": "小", "price": 40 }, { "name": "大", "price": 50 }] },
+        { "id": "lamb_mixed_rice", "name": "羊肉拌飯", "price": 80, "options": [{ "name": "小", "price": 80 }, { "name": "大", "price": 95 }] }
+      ]
+    },
+    {
+      "category": "小菜類",
+      "items": [
+        { "id": "boiled_veggies", "name": "燙青菜(份)", "price": 40 },
+        { "id": "dried_tofu_cube", "name": "油豆腐(塊)", "price": 15 },
+        { "id": "braised_egg", "name": "魯蛋(個)", "price": 15 },
+        { "id": "lamb_plate", "name": "羊肉盤", "price": 100 }
+      ]
+    }
+  ]
+}
