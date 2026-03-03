@@ -1,13 +1,13 @@
 {
-  "name": "早餐點餐計算器",
-  "short_name": "早餐點餐",
-  "description": "手機版早餐店點餐金額計算器，支援離線使用",
+  "name": "多店點餐計算器",
+  "short_name": "點餐計算",
+  "description": "多店菜單金額計算，支援完全離線使用",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f97316",
-  "theme_color": "#f97316",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "lang": "zh-TW",
   "icons": [
     {

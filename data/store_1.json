@@ -1,0 +1,50 @@
+{
+  "store_info": {
+    "id": "store_1",
+    "name": "Store 1",
+    "type": "noodle_shop"
+  },
+  "categories": [
+    {
+      "category": "麵類",
+      "items": [
+        { "id": "half_tendon_half_meat_noodles", "name": "半筋半肉麵", "price": 160, "options": [{ "name": "大碗", "price": 180 }] },
+        { "id": "braised_beef_noodles", "name": "紅燒牛肉麵", "price": 130, "options": [{ "name": "大碗", "price": 150 }] },
+        { "id": "clear_stewed_beef_noodles", "name": "清燉牛肉麵", "price": 130, "options": [{ "name": "大碗", "price": 150 }] },
+        { "id": "spicy_beef_noodles", "name": "麻辣牛肉麵", "price": 130, "options": [{ "name": "大碗", "price": 150 }] },
+        { "id": "home_style_beef_noodles", "name": "家常牛肉麵", "price": 130, "options": [{ "name": "大碗", "price": 150 }] },
+        { "id": "beef_thin_noodles", "name": "牛肉細粉", "price": 130, "options": [{ "name": "大碗", "price": 150 }] },
+        { "id": "shrimp_spicy_wonton_noodles", "name": "鮮蝦紅油炒手麵", "price": 120, "options": [{ "name": "大碗", "price": 140 }] },
+        { "id": "shrimp_spicy_wontons", "name": "鮮蝦紅油炒手", "price": 100 },
+        { "id": "shrimp_big_wonton_noodles", "name": "鮮蝦大餛飩麵", "price": 100, "options": [{ "name": "大碗", "price": 120 }] },
+        { "id": "beef_soup_noodles", "name": "牛肉湯麵", "price": 70, "options": [{ "name": "大碗", "price": 90 }] },
+        { "id": "zhajiang_noodles", "name": "酢醬麵", "price": 70, "options": [{ "name": "大碗", "price": 90 }] },
+        { "id": "sesame_noodles", "name": "麻醬麵", "price": 70, "options": [{ "name": "大碗", "price": 90 }] },
+        { "id": "hot_and_sour_soup_noodles", "name": "酸辣湯麵", "price": 70, "options": [{ "name": "大碗", "price": 90 }] },
+        { "id": "shredded_pork_pickled_tubers_noodles", "name": "榨菜肉絲麵", "price": 70, "options": [{ "name": "大碗", "price": 90 }] }
+      ]
+    },
+    {
+      "category": "水餃類",
+      "items": [
+        { "id": "pork_dumpling", "name": "鮮肉水餃", "price": 7 },
+        { "id": "beef_soup_dumplings", "name": "牛肉湯餃", "price": 100 },
+        { "id": "clear_stewed_soup_dumplings", "name": "清燉湯餃", "price": 100 },
+        { "id": "hot_and_sour_soup_dumplings", "name": "酸辣湯餃", "price": 100 },
+        { "id": "pork_soup_dumplings", "name": "豬肉湯餃", "price": 100 }
+      ]
+    },
+    {
+      "category": "湯類",
+      "items": [
+        { "id": "half_tendon_half_meat_soup", "name": "半筋半肉湯", "price": 160 },
+        { "id": "braised_beef_soup", "name": "紅燒牛肉湯", "price": 130 },
+        { "id": "clear_stewed_beef_soup", "name": "清燉牛肉湯", "price": 130 },
+        { "id": "shrimp_big_wonton_soup", "name": "鮮蝦大餛飩湯", "price": 100 },
+        { "id": "hot_and_sour_soup", "name": "酸辣湯", "price": 40 },
+        { "id": "meatball_soup", "name": "貢丸湯", "price": 30 },
+        { "id": "egg_drop_soup", "name": "蛋花湯", "price": 30 }
+      ]
+    }
+  ]
+}
