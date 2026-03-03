@@ -1,0 +1,28 @@
+{
+  "store_info": {
+    "id": "store_4",
+    "name": "Store 4",
+    "type": "snack"
+  },
+  "categories": [
+    {
+      "category": "煎類與炒飯",
+      "items": [
+        { "id": "oyster_omelet", "name": "蚵仔煎", "price": 65 },
+        { "id": "shrimp_omelet", "name": "蝦仁煎", "price": 65 },
+        { "id": "shrimp_fried_rice", "name": "鐵板蛋炒飯 蝦仁", "price": 75 },
+        { "id": "pork_fried_rice", "name": "鐵板蛋炒飯 肉絲", "price": 75 }
+      ]
+    },
+    {
+      "category": "粥湯麵類",
+      "items": [
+        { "id": "milkfish_belly_soup", "name": "無刺虱目魚肚湯", "price": 125 },
+        { "id": "pork_liver_soup", "name": "豬肝湯", "price": 45 },
+        { "id": "clam_soup", "name": "蛤仔湯", "price": 55 },
+        { "id": "seafood_congee", "name": "海鮮粥", "price": 75 },
+        { "id": "seafood_noodles", "name": "海鮮意麵", "price": 80 }
+      ]
+    }
+  ]
+}
