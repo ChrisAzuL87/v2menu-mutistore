@@ -1,0 +1,40 @@
+{
+  "store_info": {
+    "id": "store_2",
+    "name": "Store 2",
+    "type": "breakfast"
+  },
+  "categories": [
+    {
+      "category": "主餐類",
+      "items": [
+        { "id": "egg_toast", "name": "烤煎蛋", "price": 20, "options": [{ "name": "土司", "price": 20 }, { "name": "漢堡", "price": 25 }, { "name": "乳酪", "price": 30 }] },
+        { "id": "veggie_egg", "name": "蔬菜蛋", "price": 30, "options": [{ "name": "土司", "price": 30 }, { "name": "漢堡", "price": 35 }, { "name": "乳酪", "price": 40 }] },
+        { "id": "pork_egg", "name": "豬肉蛋", "price": 30, "options": [{ "name": "土司", "price": 30 }, { "name": "漢堡", "price": 35 }, { "name": "乳酪", "price": 40 }, { "name": "總匯", "price": 50 }] },
+        { "id": "kala_chicken_egg", "name": "卡啦雞腿蛋", "price": 50, "options": [{ "name": "漢堡", "price": 55 }, { "name": "總匯", "price": 65 }] }
+      ]
+    },
+    {
+      "category": "果醬類",
+      "items": [
+        { "id": "peanut_toast", "name": "花生", "price": 20, "options": [{ "name": "土司", "price": 20 }, { "name": "厚片", "price": 25 }, { "name": "乳酪", "price": 30 }] }
+      ]
+    },
+    {
+      "category": "蛋餅",
+      "items": [
+        { "id": "original_egg_pancake", "name": "原味蛋餅", "price": 20 },
+        { "id": "corn_egg_pancake", "name": "玉米蛋餅", "price": 30 },
+        { "id": "cheese_egg_pancake", "name": "起士蛋餅", "price": 30 }
+      ]
+    },
+    {
+      "category": "飲品",
+      "items": [
+        { "id": "black_tea", "name": "紅茶", "price": 15, "options": [{ "name": "中", "price": 15 }, { "name": "大", "price": 20 }] },
+        { "id": "soy_milk", "name": "豆漿", "price": 20 },
+        { "id": "coffee", "name": "研磨咖啡", "price": 30, "options": [{ "name": "中", "price": 30 }, { "name": "大", "price": 40 }] }
+      ]
+    }
+  ]
+}

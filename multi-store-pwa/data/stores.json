@@ -1,0 +1,6 @@
+[
+  { "id": "store_1", "name": "Store 1", "type": "noodle_shop", "emoji": "🍜", "file": "data/store_1.json" },
+  { "id": "store_2", "name": "Store 2", "type": "breakfast",   "emoji": "🍳", "file": "data/store_2.json" },
+  { "id": "store_3", "name": "Store 3", "type": "snack",       "emoji": "🥣", "file": "data/store_3.json" },
+  { "id": "store_4", "name": "Store 4", "type": "snack",       "emoji": "🦪", "file": "data/store_4.json" }
+]
